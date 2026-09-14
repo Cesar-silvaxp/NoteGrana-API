@@ -1,5 +1,6 @@
 package com.notegrana.api.controller;
 
+import com.notegrana.api.dto.AlterarSenhaRequest;
 import com.notegrana.api.dto.AtualizarUsuarioRequest;
 import com.notegrana.api.dto.CriarUsuarioRequest;
 import com.notegrana.api.dto.LoginRequest;
@@ -104,5 +105,24 @@ public class UsuarioController {
             usuarioService
                 .autenticar(request)
         );
+    }
+
+    @PutMapping("/{id}/senha")
+    public ResponseEntity<Void>
+        alterarSenha(
+            @PathVariable Long id,
+            @Valid
+            @RequestBody
+            AlterarSenhaRequest request
+        ) {
+
+        usuarioService.alterarSenha(
+            id,
+            request
+        );
+
+        return ResponseEntity
+            .noContent()
+            .build();
     }
 }

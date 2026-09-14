@@ -1,11 +1,15 @@
 package com.notegrana.api.service;
 
+import com.notegrana.api.dto.AlterarSenhaRequest;
 import com.notegrana.api.dto.AtualizarUsuarioRequest;
 import com.notegrana.api.dto.CriarUsuarioRequest;
 import com.notegrana.api.dto.LoginRequest;
 import com.notegrana.api.dto.UsuarioResponse;
 import com.notegrana.api.exception.CredenciaisInvalidasException;
 import com.notegrana.api.exception.EmailJaCadastradoException;
+import com.notegrana.api.exception.NovaSenhaIgualAtualException;
+import com.notegrana.api.exception.SenhaAtualIncorretaException;
+import com.notegrana.api.exception.SenhasNaoConferemException;
 import com.notegrana.api.exception.UsuarioNaoEncontradoException;
 import com.notegrana.api.model.Usuario;
 import com.notegrana.api.repository.UsuarioRepository;
@@ -156,6 +160,54 @@ public class UsuarioService {
         return converterParaResponse(
             usuario
         );
+    }
+
+    public void alterarSenha(
+        Long id,
+        AlterarSenhaRequest request
+    ) {
+        Usuario usuario =
+            buscarEntidadePorId(id);
+
+        boolean senhaAtualCorreta =
+            passwordEncoder.matches(
+                request.getSenhaAtual(),
+                usuario.getSenhaHash()
+            );
+
+        if (!senhaAtualCorreta) {
+            throw new SenhaAtualIncorretaException();
+        }
+
+        if (
+            !request
+                .getNovaSenha()
+                .equals(
+                    request
+                        .getConfirmacaoNovaSenha()
+                )
+        ) {
+            throw new SenhasNaoConferemException();
+        }
+
+        boolean novaSenhaIgualAtual =
+            passwordEncoder.matches(
+                request.getNovaSenha(),
+                usuario.getSenhaHash()
+            );
+
+        if (novaSenhaIgualAtual) {
+            throw new NovaSenhaIgualAtualException();
+        }
+
+        String novoHash =
+            passwordEncoder.encode(
+                request.getNovaSenha()
+            );
+
+        usuario.setSenhaHash(novoHash);
+
+        usuarioRepository.save(usuario);
     }
 
     private Usuario buscarEntidadePorId(

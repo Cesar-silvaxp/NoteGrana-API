@@ -22,16 +22,10 @@ public class ApiExceptionHandler {
             EmailJaCadastradoException exception
         ) {
 
-        ErroResponse erro =
-            new ErroResponse(
-                HttpStatus.CONFLICT.value(),
-                exception.getMessage(),
-                null
-            );
-
-        return ResponseEntity
-            .status(HttpStatus.CONFLICT)
-            .body(erro);
+        return criarResposta(
+            HttpStatus.CONFLICT,
+            exception.getMessage()
+        );
     }
 
     @ExceptionHandler(
@@ -42,16 +36,10 @@ public class ApiExceptionHandler {
             UsuarioNaoEncontradoException exception
         ) {
 
-        ErroResponse erro =
-            new ErroResponse(
-                HttpStatus.NOT_FOUND.value(),
-                exception.getMessage(),
-                null
-            );
-
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(erro);
+        return criarResposta(
+            HttpStatus.NOT_FOUND,
+            exception.getMessage()
+        );
     }
 
     @ExceptionHandler(
@@ -62,16 +50,52 @@ public class ApiExceptionHandler {
             CredenciaisInvalidasException exception
         ) {
 
-        ErroResponse erro =
-            new ErroResponse(
-                HttpStatus.UNAUTHORIZED.value(),
-                exception.getMessage(),
-                null
-            );
+        return criarResposta(
+            HttpStatus.UNAUTHORIZED,
+            exception.getMessage()
+        );
+    }
 
-        return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(erro);
+    @ExceptionHandler(
+        SenhaAtualIncorretaException.class
+    )
+    public ResponseEntity<ErroResponse>
+        tratarSenhaAtualIncorreta(
+            SenhaAtualIncorretaException exception
+        ) {
+
+        return criarResposta(
+            HttpStatus.UNAUTHORIZED,
+            exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(
+        SenhasNaoConferemException.class
+    )
+    public ResponseEntity<ErroResponse>
+        tratarSenhasNaoConferem(
+            SenhasNaoConferemException exception
+        ) {
+
+        return criarResposta(
+            HttpStatus.BAD_REQUEST,
+            exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(
+        NovaSenhaIgualAtualException.class
+    )
+    public ResponseEntity<ErroResponse>
+        tratarNovaSenhaIgualAtual(
+            NovaSenhaIgualAtualException exception
+        ) {
+
+        return criarResposta(
+            HttpStatus.BAD_REQUEST,
+            exception.getMessage()
+        );
     }
 
     @ExceptionHandler(
@@ -104,6 +128,24 @@ public class ApiExceptionHandler {
 
         return ResponseEntity
             .badRequest()
+            .body(erro);
+    }
+
+    private ResponseEntity<ErroResponse>
+        criarResposta(
+            HttpStatus status,
+            String mensagem
+        ) {
+
+        ErroResponse erro =
+            new ErroResponse(
+                status.value(),
+                mensagem,
+                null
+            );
+
+        return ResponseEntity
+            .status(status)
             .body(erro);
     }
 }
