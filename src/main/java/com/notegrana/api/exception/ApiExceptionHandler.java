@@ -43,6 +43,20 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(
+        GastoNaoEncontradoException.class
+    )
+    public ResponseEntity<ErroResponse>
+        tratarGastoNaoEncontrado(
+            GastoNaoEncontradoException exception
+        ) {
+
+        return criarResposta(
+            HttpStatus.NOT_FOUND,
+            exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(
         CredenciaisInvalidasException.class
     )
     public ResponseEntity<ErroResponse>
