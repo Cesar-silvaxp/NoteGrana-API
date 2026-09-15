@@ -99,6 +99,34 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(
+        TokenRecuperacaoInvalidoException.class
+    )
+    public ResponseEntity<ErroResponse>
+        tratarTokenInvalido(
+            TokenRecuperacaoInvalidoException exception
+        ) {
+
+        return criarResposta(
+            HttpStatus.BAD_REQUEST,
+            exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(
+        TokenRecuperacaoExpiradoException.class
+    )
+    public ResponseEntity<ErroResponse>
+        tratarTokenExpirado(
+            TokenRecuperacaoExpiradoException exception
+        ) {
+
+        return criarResposta(
+            HttpStatus.BAD_REQUEST,
+            exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(
         MethodArgumentNotValidException.class
     )
     public ResponseEntity<ErroResponse>
