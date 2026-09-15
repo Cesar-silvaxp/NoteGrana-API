@@ -4,6 +4,7 @@ import com.notegrana.api.dto.AlterarSenhaRequest;
 import com.notegrana.api.dto.AtualizarUsuarioRequest;
 import com.notegrana.api.dto.CriarUsuarioRequest;
 import com.notegrana.api.dto.LoginRequest;
+import com.notegrana.api.dto.LoginResponse;
 import com.notegrana.api.dto.UsuarioResponse;
 import com.notegrana.api.service.UsuarioService;
 
@@ -94,7 +95,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsuarioResponse>
+    public ResponseEntity<LoginResponse>
         login(
             @Valid
             @RequestBody

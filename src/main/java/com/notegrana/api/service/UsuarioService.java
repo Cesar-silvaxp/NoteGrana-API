@@ -4,6 +4,7 @@ import com.notegrana.api.dto.AlterarSenhaRequest;
 import com.notegrana.api.dto.AtualizarUsuarioRequest;
 import com.notegrana.api.dto.CriarUsuarioRequest;
 import com.notegrana.api.dto.LoginRequest;
+import com.notegrana.api.dto.LoginResponse;
 import com.notegrana.api.dto.UsuarioResponse;
 import com.notegrana.api.exception.CredenciaisInvalidasException;
 import com.notegrana.api.exception.EmailJaCadastradoException;
@@ -13,6 +14,7 @@ import com.notegrana.api.exception.SenhasNaoConferemException;
 import com.notegrana.api.exception.UsuarioNaoEncontradoException;
 import com.notegrana.api.model.Usuario;
 import com.notegrana.api.repository.UsuarioRepository;
+import com.notegrana.api.security.JwtService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,16 +26,21 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public UsuarioService(
         UsuarioRepository usuarioRepository,
-        PasswordEncoder passwordEncoder
+        PasswordEncoder passwordEncoder,
+        JwtService jwtService
     ) {
         this.usuarioRepository =
             usuarioRepository;
 
         this.passwordEncoder =
             passwordEncoder;
+
+        this.jwtService =
+            jwtService;
     }
 
     public UsuarioResponse criarUsuario(
@@ -132,7 +139,7 @@ public class UsuarioService {
         );
     }
 
-    public UsuarioResponse autenticar(
+    public LoginResponse autenticar(
         LoginRequest request
     ) {
         String email =
@@ -157,8 +164,17 @@ public class UsuarioService {
             throw new CredenciaisInvalidasException();
         }
 
-        return converterParaResponse(
-            usuario
+        UsuarioResponse usuarioResponse =
+            converterParaResponse(usuario);
+
+        JwtService.TokenGerado tokenGerado =
+            jwtService.gerarToken(usuario);
+
+        return new LoginResponse(
+            tokenGerado.token(),
+            "Bearer",
+            tokenGerado.expiraEm(),
+            usuarioResponse
         );
     }
 
