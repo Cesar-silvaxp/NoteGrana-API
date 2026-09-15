@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,6 +81,40 @@ public class GastoController {
 
         return ResponseEntity.ok(
             gastoService.buscarPorId(
+                id,
+                usuario.getId()
+            )
+        );
+    }
+
+    @PatchMapping("/{id}/ignorar")
+    public ResponseEntity<GastoResponse>
+        ignorarGasto(
+            @PathVariable Long id,
+
+            @AuthenticationPrincipal
+            Usuario usuario
+        ) {
+
+        return ResponseEntity.ok(
+            gastoService.ignorarGasto(
+                id,
+                usuario.getId()
+            )
+        );
+    }
+
+    @PatchMapping("/{id}/reativar")
+    public ResponseEntity<GastoResponse>
+        reativarGasto(
+            @PathVariable Long id,
+
+            @AuthenticationPrincipal
+            Usuario usuario
+        ) {
+
+        return ResponseEntity.ok(
+            gastoService.reativarGasto(
                 id,
                 usuario.getId()
             )

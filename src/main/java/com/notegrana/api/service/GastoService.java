@@ -4,6 +4,7 @@ import com.notegrana.api.dto.CriarGastoRequest;
 import com.notegrana.api.dto.GastoResponse;
 import com.notegrana.api.exception.GastoNaoEncontradoException;
 import com.notegrana.api.model.Gasto;
+import com.notegrana.api.model.StatusGasto;
 import com.notegrana.api.model.Usuario;
 import com.notegrana.api.repository.GastoRepository;
 
@@ -82,18 +83,73 @@ public class GastoService {
         Long usuarioId
     ) {
         Gasto gasto =
-            gastoRepository
-                .findByIdAndUsuarioId(
-                    gastoId,
-                    usuarioId
-                )
-                .orElseThrow(
-                    GastoNaoEncontradoException::new
-                );
+            buscarEntidadeDoUsuario(
+                gastoId,
+                usuarioId
+            );
 
         return converterParaResponse(
             gasto
         );
+    }
+
+    @Transactional
+    public GastoResponse ignorarGasto(
+        Long gastoId,
+        Long usuarioId
+    ) {
+        return alterarStatus(
+            gastoId,
+            usuarioId,
+            StatusGasto.IGNORADO
+        );
+    }
+
+    @Transactional
+    public GastoResponse reativarGasto(
+        Long gastoId,
+        Long usuarioId
+    ) {
+        return alterarStatus(
+            gastoId,
+            usuarioId,
+            StatusGasto.ATIVO
+        );
+    }
+
+    private GastoResponse alterarStatus(
+        Long gastoId,
+        Long usuarioId,
+        StatusGasto status
+    ) {
+        Gasto gasto =
+            buscarEntidadeDoUsuario(
+                gastoId,
+                usuarioId
+            );
+
+        gasto.setStatus(status);
+
+        Gasto gastoAtualizado =
+            gastoRepository.save(gasto);
+
+        return converterParaResponse(
+            gastoAtualizado
+        );
+    }
+
+    private Gasto buscarEntidadeDoUsuario(
+        Long gastoId,
+        Long usuarioId
+    ) {
+        return gastoRepository
+            .findByIdAndUsuarioId(
+                gastoId,
+                usuarioId
+            )
+            .orElseThrow(
+                GastoNaoEncontradoException::new
+            );
     }
 
     private GastoResponse converterParaResponse(
