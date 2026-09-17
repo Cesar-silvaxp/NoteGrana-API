@@ -13,6 +13,8 @@ public class GastoResponse {
     private final String descricao;
     private final LocalDateTime dataHora;
     private final StatusGasto status;
+    private final String idOrigem;
+    private final String pacoteOrigem;
 
     public GastoResponse(
         Long id,
@@ -20,7 +22,9 @@ public class GastoResponse {
         String titulo,
         String descricao,
         LocalDateTime dataHora,
-        StatusGasto status
+        StatusGasto status,
+        String idOrigem,
+        String pacoteOrigem
     ) {
         this.id = id;
         this.valor = valor;
@@ -28,6 +32,8 @@ public class GastoResponse {
         this.descricao = descricao;
         this.dataHora = dataHora;
         this.status = status;
+        this.idOrigem = idOrigem;
+        this.pacoteOrigem = pacoteOrigem;
     }
 
     public Long getId() {
@@ -52,5 +58,13 @@ public class GastoResponse {
 
     public StatusGasto getStatus() {
         return status;
+    }
+
+    public String getIdOrigem() {
+        return idOrigem;
+    }
+
+    public String getPacoteOrigem() {
+        return pacoteOrigem;
     }
 }

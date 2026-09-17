@@ -30,22 +30,46 @@ public class GastoService {
         CriarGastoRequest request,
         Usuario usuario
     ) {
+        String idOrigem =
+            limparTexto(
+                request.getIdOrigem()
+            );
+
+        /*
+         * Se o Android já enviou esse
+         * gasto anteriormente, não cria
+         * uma segunda linha.
+         */
+        if (idOrigem != null) {
+            Gasto existente =
+                gastoRepository
+                    .findByUsuarioIdAndIdOrigem(
+                        usuario.getId(),
+                        idOrigem
+                    )
+                    .orElse(null);
+
+            if (existente != null) {
+                return converterParaResponse(
+                    existente
+                );
+            }
+        }
+
         String titulo =
             request
                 .getTitulo()
                 .trim();
 
         String descricao =
-            request.getDescricao();
+            limparTexto(
+                request.getDescricao()
+            );
 
-        if (descricao != null) {
-            descricao =
-                descricao.trim();
-
-            if (descricao.isBlank()) {
-                descricao = null;
-            }
-        }
+        String pacoteOrigem =
+            limparTexto(
+                request.getPacoteOrigem()
+            );
 
         Gasto gasto =
             new Gasto(
@@ -53,6 +77,8 @@ public class GastoService {
                 titulo,
                 descricao,
                 request.getDataHora(),
+                idOrigem,
+                pacoteOrigem,
                 usuario
             );
 
@@ -152,6 +178,23 @@ public class GastoService {
             );
     }
 
+    private String limparTexto(
+        String texto
+    ) {
+        if (texto == null) {
+            return null;
+        }
+
+        String limpo =
+            texto.trim();
+
+        if (limpo.isBlank()) {
+            return null;
+        }
+
+        return limpo;
+    }
+
     private GastoResponse converterParaResponse(
         Gasto gasto
     ) {
@@ -161,7 +204,9 @@ public class GastoService {
             gasto.getTitulo(),
             gasto.getDescricao(),
             gasto.getDataHora(),
-            gasto.getStatus()
+            gasto.getStatus(),
+            gasto.getIdOrigem(),
+            gasto.getPacoteOrigem()
         );
     }
 }

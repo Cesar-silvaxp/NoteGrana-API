@@ -45,6 +45,18 @@ public class CriarGastoRequest {
     )
     private LocalDateTime dataHora;
 
+    @Size(
+        max = 100,
+        message = "O identificador de origem deve possuir no máximo 100 caracteres."
+    )
+    private String idOrigem;
+
+    @Size(
+        max = 180,
+        message = "O pacote de origem deve possuir no máximo 180 caracteres."
+    )
+    private String pacoteOrigem;
+
     public CriarGastoRequest() {
     }
 
@@ -86,5 +98,25 @@ public class CriarGastoRequest {
         LocalDateTime dataHora
     ) {
         this.dataHora = dataHora;
+    }
+
+    public String getIdOrigem() {
+        return idOrigem;
+    }
+
+    public void setIdOrigem(
+        String idOrigem
+    ) {
+        this.idOrigem = idOrigem;
+    }
+
+    public String getPacoteOrigem() {
+        return pacoteOrigem;
+    }
+
+    public void setPacoteOrigem(
+        String pacoteOrigem
+    ) {
+        this.pacoteOrigem = pacoteOrigem;
     }
 }

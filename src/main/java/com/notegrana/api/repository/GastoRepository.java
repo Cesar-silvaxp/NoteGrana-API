@@ -20,4 +20,10 @@ public interface GastoRepository
             Long id,
             Long usuarioId
         );
+
+    Optional<Gasto>
+        findByUsuarioIdAndIdOrigem(
+            Long usuarioId,
+            String idOrigem
+        );
 }

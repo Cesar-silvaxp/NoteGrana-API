@@ -11,16 +11,30 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "gastos")
+@Table(
+    name = "gastos",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_gasto_usuario_id_origem",
+            columnNames = {
+                "usuario_id",
+                "id_origem"
+            }
+        )
+    }
+)
 public class Gasto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+        strategy = GenerationType.IDENTITY
+    )
     private Long id;
 
     @Column(
@@ -54,6 +68,18 @@ public class Gasto {
     )
     private StatusGasto status;
 
+    @Column(
+        name = "id_origem",
+        length = 100
+    )
+    private String idOrigem;
+
+    @Column(
+        name = "pacote_origem",
+        length = 180
+    )
+    private String pacoteOrigem;
+
     @ManyToOne(
         fetch = FetchType.LAZY,
         optional = false
@@ -72,12 +98,16 @@ public class Gasto {
         String titulo,
         String descricao,
         LocalDateTime dataHora,
+        String idOrigem,
+        String pacoteOrigem,
         Usuario usuario
     ) {
         this.valor = valor;
         this.titulo = titulo;
         this.descricao = descricao;
         this.dataHora = dataHora;
+        this.idOrigem = idOrigem;
+        this.pacoteOrigem = pacoteOrigem;
         this.usuario = usuario;
         this.status = StatusGasto.ATIVO;
     }
@@ -134,6 +164,26 @@ public class Gasto {
         StatusGasto status
     ) {
         this.status = status;
+    }
+
+    public String getIdOrigem() {
+        return idOrigem;
+    }
+
+    public void setIdOrigem(
+        String idOrigem
+    ) {
+        this.idOrigem = idOrigem;
+    }
+
+    public String getPacoteOrigem() {
+        return pacoteOrigem;
+    }
+
+    public void setPacoteOrigem(
+        String pacoteOrigem
+    ) {
+        this.pacoteOrigem = pacoteOrigem;
     }
 
     public Usuario getUsuario() {
