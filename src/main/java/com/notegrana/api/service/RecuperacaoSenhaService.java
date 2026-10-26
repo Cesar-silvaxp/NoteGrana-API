@@ -3,6 +3,7 @@ package com.notegrana.api.service;
 import com.notegrana.api.dto.RecuperacaoSenhaResponse;
 import com.notegrana.api.dto.RedefinirSenhaRequest;
 import com.notegrana.api.dto.SolicitarRecuperacaoSenhaRequest;
+import com.notegrana.api.exception.EmailRecuperacaoException;
 import com.notegrana.api.exception.SenhasNaoConferemException;
 import com.notegrana.api.exception.TokenRecuperacaoExpiradoException;
 import com.notegrana.api.exception.TokenRecuperacaoInvalidoException;
@@ -14,7 +15,6 @@ import com.notegrana.api.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,7 +126,9 @@ public class RecuperacaoSenhaService {
                     )
             );
 
-        tokenRepository.save(token);
+        tokenRepository.save(
+            token
+        );
 
         try {
             emailRecuperacaoService
@@ -141,8 +143,9 @@ public class RecuperacaoSenhaService {
                 "E-mail de recuperação enviado com sucesso."
             );
 
-        } catch (MailException exception) {
-
+        } catch (
+            EmailRecuperacaoException exception
+        ) {
             tokenRepository.delete(
                 token
             );
